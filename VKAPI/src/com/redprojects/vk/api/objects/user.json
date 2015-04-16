@@ -1,0 +1,166 @@
+{
+  "country": {
+    "id": 1,
+    "title": "Россия"
+  },
+  "friend_status": 0,
+  "tv": "",
+  "bdate": "2.4.1997",
+  "can_send_friend_request": 1,
+  "occupation": {
+    "name": "МТИ «ВТУ» (бывш. ВТУ ЮНЕСКО)",
+    "id": 7927,
+    "type": "university"
+  },
+  "last_seen": {
+    "time": 1425872268,
+    "platform": 7
+  },
+  "about": "",
+  "education_form": "Заочное отделение",
+  "faculty": 319637,
+  "relation": 0,
+  "quotes": "",
+  "movies": "Бойцовский клуб",
+  "twitter": "RedCreepster",
+  "music": "",
+  "universities": [
+    {
+      "country": 1,
+      "faculty_name": "Институт интеллектуальных технологий и коммуникаций",
+      "city": 1058227,
+      "name": "МТИ «ВТУ» (бывш. ВТУ ЮНЕСКО)",
+      "id": 7927,
+      "education_status": "Абитуриент",
+      "education_form": "Заочное отделение",
+      "faculty": 319637
+    }
+  ],
+  "screen_name": "redcreepster",
+  "graduation": 0,
+  "games": "World of Warcraft",
+  "id": 135982827,
+  "can_see_all_posts": 1,
+  "photo_100": "http://cs624219.vk.me/v624219827/1ad0d/gpR-_ItSgn8.jpg",
+  "home_phone": "",
+  "common_count": 54,
+  "counters": {
+    "albums": 3,
+    "subscriptions": 0,
+    "notes": 0,
+    "online_friends": 1,
+    "user_videos": 0,
+    "groups": 82,
+    "videos": 23,
+    "photos": 374,
+    "friends": 54,
+    "user_photos": 1,
+    "followers": 63,
+    "pages": 43,
+    "audios": 362,
+    "gifts": 9
+  },
+  "personal": {
+    "alcohol": 2,
+    "life_main": 6,
+    "people_main": 2,
+    "smoking": 3,
+    "inspired_by": "World of Warcraft"
+  },
+  "relatives": [
+    {
+      "id": 71929875,
+      "type": "sibling"
+    },
+    {
+      "id": 162102997,
+      "type": "sibling"
+    },
+    {
+      "id": 150209,
+      "type": "sibling"
+    }
+  ],
+  "photo_max": "http://cs624219.vk.me/v624219827/1ad0c/aw1hxjYoHNQ.jpg",
+  "can_see_audio": 1,
+  "home_town": "",
+  "books": "",
+  "schools": [
+    {
+      "country": 1,
+      "year_from": 2010,
+      "city": 117,
+      "name": "Школа №12",
+      "year_to": 2014,
+      "id": "1131657",
+      "year_graduated": 2014,
+      "class": "а"
+    }
+  ],
+  "domain": "redcreepster",
+  "photo_200_orig": "http://cs624219.vk.me/v624219827/1ad0a/7-RyMcULvZs.jpg",
+  "photo_400_orig": "http://cs624219.vk.me/v624219827/1ad0b/H5X-6EVth0k.jpg",
+  "status": "Boring.",
+  "has_mobile": 1,
+  "is_favorite": 0,
+  "photo_50": "http://cs624219.vk.me/v624219827/1ad0e/nSYB5GWPPRs.jpg",
+  "photo_id": "135982827_352148577",
+  "city": {
+    "id": 1058227,
+    "title": "свх Раменское"
+  },
+  "timezone": 3,
+  "exports": {"facebook": 1},
+  "university": 7927,
+  "photo_max_orig": "http://cs624219.vk.me/v624219827/1ad0b/H5X-6EVth0k.jpg",
+  "skype": "boryusik100",
+  "faculty_name": "Институт интеллектуальных технологий и коммуникаций",
+  "mobile_phone": "+79253133196",
+  "nickname": "",
+  "can_post": 1,
+  "first_name": "Боря",
+  "photo_200": "http://cs624219.vk.me/v624219827/1ad0c/aw1hxjYoHNQ.jpg",
+  "wall_comments": 1,
+  "sex": 2,
+  "facebook": "100003528591668",
+  "verified": 0,
+  "last_name": "Онофрей",
+  "university_name": "МТИ «ВТУ» (бывш. ВТУ ЮНЕСКО)",
+  "education_status": "Абитуриент",
+  "can_write_private_message": 1,
+  "site": "http://redcreepster.ru/ http://nsredcompany.ru/ http://nick-name.ru/sertificates/639735/, http://moldercraft.com",
+  "blacklisted": 0,
+  "activities": "",
+  "crop_photo": {
+    "rect": {
+      "x": 25.36,
+      "y": 14.42,
+      "y2": 65.51,
+      "x2": 76.46
+    },
+    "photo": {
+      "date": 1422047331,
+      "post_id": 3800,
+      "photo_604": "http://cs624219.vk.me/v624219827/1ad04/brUw99xV3oo.jpg",
+      "owner_id": 135982827,
+      "photo_75": "http://cs624219.vk.me/v624219827/1ad02/tcdozCmO9oI.jpg",
+      "width": 604,
+      "photo_130": "http://cs624219.vk.me/v624219827/1ad03/VP8UviXn2Ds.jpg",
+      "album_id": -6,
+      "id": 352148577,
+      "text": "",
+      "height": 588
+    },
+    "crop": {
+      "x": 4.64,
+      "y": 3.4,
+      "y2": 96.6,
+      "x2": 95.36
+    }
+  },
+  "followers_count": 63,
+  "facebook_name": "Онофрей Борис",
+  "online": 0,
+  "interests": "",
+  "is_friend": 0
+}
