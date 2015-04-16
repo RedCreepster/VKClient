@@ -75,6 +75,15 @@ public class Argument<T> {
         return value != defaultValue && value != null;
     }
 
+    public Argument<T> required(String help) {
+        //noinspection ConstantConditions
+        if (help == null || (help != null && help.isEmpty()))
+            help = "required";
+        if (value == defaultValue)
+            Log.console(this, name + ": " + help);
+        return this;
+    }
+
     @Override
     public String toString() {
         return value.toString();

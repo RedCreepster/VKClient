@@ -17,9 +17,21 @@ public class AutoDownloadMusic {
     public static void main(String[] args) throws IOException, InterruptedException, VKAPIException {
         Log.setFilePrefix(AutoDownloadMusic.class.getSimpleName());
 
+        Log.console(null, "\nАргументы программы:" +
+                        "-help Вывод этого меню\n" +
+                        "-getLoginUrl Получить ссылку для авторизации\n" +
+                        "-appId Идентификатор приложения\n" +
+                        "-token Токен\n" +
+                        "-userId ID пользователя\n" +
+                        "-path Путь для сохранения\n" +
+                        "-playlistName Имя плейлиста для сохранения\n" +
+                        "-playlistType Тип плейлиста\n" +
+                        "-updateInterval Интервал обновления\n"
+        );
+
         ProgramArguments.getInstance().put("getLoginUrl", new Argument<>(true, "Get login url", "getLoginUrl", args));
         ProgramArguments.getInstance().put("appId", new Argument<>(false, "Application id", "appId", args, new IntegerConverter()));
-        ProgramArguments.getInstance().put("token", new Argument<>(false, "Token", "token", args, new StringConverter()));
+        ProgramArguments.getInstance().put("token", new Argument<>(false, "Token", "token", args, new StringConverter()).required(null));
         ProgramArguments.getInstance().put("userId", new Argument<>(false, "User id", "userId", args, new IntegerConverter()));
         ProgramArguments.getInstance().put("path", new Argument<>(false, "Path to save", "path", args, new StringConverter()));
         ProgramArguments.getInstance().put("playlistName", new Argument<>(false, "Playlist name", "playlistName", args, new StringConverter()));
