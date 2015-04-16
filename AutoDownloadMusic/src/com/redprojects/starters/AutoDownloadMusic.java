@@ -17,16 +17,16 @@ public class AutoDownloadMusic {
     public static void main(String[] args) throws IOException, InterruptedException, VKAPIException {
         Log.setFilePrefix(AutoDownloadMusic.class.getSimpleName());
 
-        Log.console(null, "\nАргументы программы:" +
-                        "-help Вывод этого меню\n" +
-                        "-getLoginUrl Получить ссылку для авторизации\n" +
-                        "-appId Идентификатор приложения\n" +
-                        "-token Токен\n" +
-                        "-userId ID пользователя\n" +
-                        "-path Путь для сохранения\n" +
-                        "-playlistName Имя плейлиста для сохранения\n" +
-                        "-playlistType Тип плейлиста\n" +
-                        "-updateInterval Интервал обновления\n"
+        Log.console(null, "\nРђСЂРіСѓРјРµРЅС‚С‹ РїСЂРѕРіСЂР°РјРјС‹:" +
+                        "-help Р’С‹РІРѕРґ СЌС‚РѕРіРѕ РјРµРЅСЋ\n" +
+                        "-getLoginUrl РџРѕР»СѓС‡РёС‚СЊ СЃСЃС‹Р»РєСѓ РґР»СЏ Р°РІС‚РѕСЂРёР·Р°С†РёРё\n" +
+                        "-appId РРґРµРЅС‚РёС„РёРєР°С‚РѕСЂ РїСЂРёР»РѕР¶РµРЅРёСЏ\n" +
+                        "-token РўРѕРєРµРЅ\n" +
+                        "-userId ID РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ\n" +
+                        "-path РџСѓС‚СЊ РґР»СЏ СЃРѕС…СЂР°РЅРµРЅРёСЏ\n" +
+                        "-playlistName РРјСЏ РїР»РµР№Р»РёСЃС‚Р° РґР»СЏ СЃРѕС…СЂР°РЅРµРЅРёСЏ\n" +
+                        "-playlistType РўРёРї РїР»РµР№Р»РёСЃС‚Р°\n" +
+                        "-updateInterval РРЅС‚РµСЂРІР°Р» РѕР±РЅРѕРІР»РµРЅРёСЏ\n"
         );
 
         ProgramArguments.getInstance().put("getLoginUrl", new Argument<>(true, "Get login url", "getLoginUrl", args));
