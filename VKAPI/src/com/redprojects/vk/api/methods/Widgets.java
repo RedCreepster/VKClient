@@ -65,11 +65,8 @@ public class Widgets extends Method {
                 {"count", String.valueOf(count)}
         };
 
-        if (vkapi != null) {
-            return vkapi.getResponse(name + "." + methodName, request);
-        }
+        return vkapi != null ? vkapi.getResponse(name + "." + methodName, request) : getResponseWithoutAuthorization(name + "." + methodName, request);
 
-        return getResponseWithoutAuthorization(name + "." + methodName, request);
     }
 
     /**

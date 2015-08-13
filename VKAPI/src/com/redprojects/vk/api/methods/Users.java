@@ -9,20 +9,6 @@ import static com.redprojects.vk.api.VKAPI.getResponseWithoutAuthorization;
 @SuppressWarnings("UnusedDeclaration")
 public class Users extends Method {
 
-    /**
-     * Конструктор для вызова методов без авторизации
-     */
-    public Users() {
-        super(null);
-    }
-
-    /**
-     * Конструктор для вызова методов с авторизацией
-     */
-    public Users(VKAPI vkapi) {
-        super(vkapi);
-    }
-
     public enum Fields {
         sex, bdate, city, country, photo_50, photo_100, photo_200_orig, photo_200, photo_400_orig,
         photo_max, photo_max_orig, online, online_mobile, lists, domain, has_mobile, contacts, connections,
@@ -37,6 +23,20 @@ public class Users extends Method {
 
     public enum ReportType {
         porn, spam, insult, advertisment
+    }
+
+    /**
+     * Конструктор для вызова методов без авторизации
+     */
+    public Users() {
+        super(null);
+    }
+
+    /**
+     * Конструктор для вызова методов с авторизацией
+     */
+    public Users(VKAPI vkapi) {
+        super(vkapi);
     }
 
     /**

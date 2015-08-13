@@ -1,7 +1,6 @@
 package com.redprojects.vk.autodownloadmusic.utils;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
+import com.redprojects.vk.api.objects.Audio;
 
 public class PlayListManager {
 
@@ -9,32 +8,29 @@ public class PlayListManager {
         PLS, M3U
     }
 
-    public static String getPlayList(JSONArray items, String path, Types type) {
-        return type.equals(Types.M3U) ? getM3UPlayList(items, path) : getPlsPlayList(items, path);
+    public static String getPlayList(Audio[] audios, String path, Types type) {
+        return type.equals(Types.M3U) ? getM3UPlayList(audios, path) : (type.equals(Types.PLS) ? getPlsPlayList(audios, path) : "");
     }
 
-    public static String getPlsPlayList(JSONArray items, String path) {
+    public static String getPlsPlayList(Audio[] audios, String path) {
         String pls = "[playlist]\n";
-        int i;
-        for (i = 0; i < items.length(); i++) {
-            JSONObject item = items.getJSONObject(i);
-            pls += "File" + (i + 1) + "=" + path + item.getInt("id") + ".mp3\n" +
-                    "Length" + (i + 1) + "=" + item.getInt("duration") + "\n" +
-                    "Title" + (i + 1) + "=" + item.getString("artist") + " - " + item.getString("title") + "\n";
-        }
-        pls += "NumberOfEntries=" + (i + 1) + "\n" +
+        for (int i = 0; i < audios.length; i++)
+            pls += "File" + (i + 1) + "=" + path + audios[i].getFileName() + ".mp3\n" +
+                    "Length" + (i + 1) + "=" + audios[i].getDuration() + "\n" +
+                    "Title" + (i + 1) + "=" + audios[i].getFullName() + "\n";
+
+        pls += "NumberOfEntries=" + (audios.length - 1) + "\n" +
                 "Version=2";
         return pls;
     }
 
-    public static String getM3UPlayList(JSONArray items, String path) {
+    public static String getM3UPlayList(Audio[] audios, String path) {
         String m3u = "#EXTM3U\n";
-        for (int i = 0; i < items.length(); i++) {
-            JSONObject item = items.getJSONObject(i);
-            m3u += "#EXTINF:" + item.getInt("duration") + "," +
-                    item.getString("artist") + " - " + item.getString("title") + "\n" +
-                    path + item.getInt("id") + ".mp3\n";
-        }
+        for (Audio audio : audios)
+            m3u += "#EXTINF:" + audio.getDuration() + "," +
+                    audio.getFullName() + "\n" +
+                    path + audio.getFileName() + ".mp3\n";
+
         return m3u;
     }
 }

@@ -1,5 +1,6 @@
 package com.redprojects.bot.actions;
 
+import com.redprojects.utils.Log;
 import com.redprojects.vk.api.VKAPI;
 import com.redprojects.vk.api.exceptions.VKAPIException;
 import com.redprojects.vk.api.methods.Messages;
@@ -21,6 +22,7 @@ public abstract class IAction {
             chatId = message.getInt("chat_id");
         else
             chatId = 0;
+        Log.console(Messages.class, "Класс отвечайщий за обработку: " + this.getClass().getSimpleName());
     }
 
     public abstract IAction parse() throws IOException;

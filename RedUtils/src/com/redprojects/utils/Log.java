@@ -13,18 +13,20 @@ public class Log {
     private Log() {
     }
 
-    public static void console(Object sender, Object message) {
-        message = message.toString();
-        String buf = "[" + new SimpleDateFormat("HH:mm:ss").format(new Date()) + "] ";
-        if (sender instanceof String)
-            buf += "[" + sender.toString() + "]: " + message;
-        else if (sender != null)
-            buf += "[" + sender.getClass().getSimpleName() + "]: " + message;
-        else
-            buf += "[Anonymous]: " + message;
+    public static void console(Object sender, Object... messages) {
+        for (int i = 0; i < messages.length; i++) {
+            messages[i] = messages[i].toString();
+            String buf = "[" + new SimpleDateFormat("HH:mm:ss").format(new Date()) + "] ";
+            if (sender instanceof String)
+                buf += "[" + sender.toString() + "]: " + messages[i];
+            else if (sender != null)
+                buf += "[" + sender.getClass().getSimpleName() + "]: " + messages[i];
+            else
+                buf += "[Anonymous]: " + messages[i];
 
-        System.out.println(buf);
-        Utils.appendFile(logFile, buf + "\r\n");
+            System.out.println(buf);
+            Utils.appendFile(logFile, buf + "\r\n");
+        }
     }
 
     public static void toInterface(String message) {

@@ -17,7 +17,7 @@ public class AutoDownloadMusic {
     public static void main(String[] args) throws IOException, InterruptedException, VKAPIException {
         Log.setFilePrefix(AutoDownloadMusic.class.getSimpleName());
 
-        Log.console(null, "\nАргументы программы:" +
+        Log.console(null, "Аргументы программы:\n" +
                         "-help Вывод этого меню\n" +
                         "-getLoginUrl Получить ссылку для авторизации\n" +
                         "-appId Идентификатор приложения\n" +

@@ -24,9 +24,8 @@ public class Help extends IAction {
     @Override
     public IAction sendMessage() throws VKAPIException {
         sendResult("", new int[0],
-                "Испольование:\n" +
+                "Доступные команды:\n" +
                         "!player [arg]\n" +
-                        "Доступные аргументы:\n" +
                         "!help - Вызов этого меню.\n" +
                         "!time - Точное время\n" +
                         "!player - Управление плеером\n" +

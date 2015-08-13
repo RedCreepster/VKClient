@@ -18,7 +18,8 @@ public class Utils {
         return executePost(targetURL, data, "", "", new byte[0], "text/plain");
     }
 
-    public static String executePost(String targetURL, String[][] data, String postDataFieldName, String postDataName, byte[] postData, String postDataContentType) throws IOException {
+    public static String executePost(String targetURL, String[][] data, String postDataFieldName, String postDataName,
+                                     byte[] postData, String postDataContentType) throws IOException {
         String boundary = Long.toHexString(System.currentTimeMillis()); // Just generate some unique random value.
 
         URL url = new URL(targetURL);
@@ -43,7 +44,17 @@ public class Utils {
         //==============================================================
         // Отправка POST данных
         //==============================================================
-        for (String[] aData : data)
+        for (int i = 0; i < data.length; i++) {
+            osw.write("--" + boundary + "" +
+                    "\r\n" +
+                    "Content-Disposition: form-data; " +
+                    "name=\"" + data[i][0] + "\"" +
+                    "\r\n" +
+                    "\r\n" +
+                    data[i][1] +
+                    ((i < data.length - 1) ? "\r\n" : ""));
+        }
+        /*for (String[] aData : data)
             osw.write("--" + boundary + "" +
                     "\r\n" +
                     "Content-Disposition: form-data; " +
@@ -52,7 +63,7 @@ public class Utils {
                     "\r\n" +
                     aData[1] +
                     "\r\n");
-        /*os.write((
+        os.write((
                 "--" + boundary + "" +
                         "\r\n" +
                         "Content-Disposition: form-data; " +
@@ -107,6 +118,13 @@ public class Utils {
             buf += strings[0] + "=" + strings[1] + "&";
         }
         return buf;
+    }
+
+    public static String concat(Object[] strings) {
+        String result = "";
+        for (Object object : strings)
+            result += String.valueOf(object) + ",";
+        return result.substring(0, result.length() - 1);
     }
 
     public static String inputStreamToString(InputStream inputStream, boolean close) throws IOException {

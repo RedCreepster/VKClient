@@ -26,7 +26,7 @@ public class VKAPI implements Cloneable {
         token
     }
 
-    public static final String apiVersion = "5.14";
+    public static final String apiVersion = "5.30";
 
     private final String accessToken;
     private final int userId;
@@ -35,6 +35,8 @@ public class VKAPI implements Cloneable {
     private final Scope[] scopes;
     private final String redirectUri;
     private final ResponseType responseType;
+
+    private static boolean debug = false;
 
     public VKAPI(String accessToken) {
         this(accessToken, 0);
@@ -90,6 +92,8 @@ public class VKAPI implements Cloneable {
     public static JSONObject getResponseWithoutAuthorization(String method, String[][] args) throws VKAPIException {
         args = addElement(args, new String[]{"v", apiVersion});
         String url = "https://api.vk.com/method/" + method;
+        if (debug)
+            System.out.println(getUrl(method, args));
         try {
             String response = Utils.executePost(url, args);
 
@@ -114,8 +118,8 @@ public class VKAPI implements Cloneable {
         return response;
     }
 
-    public String getUrl(String method, String[][] args) {
-        return "https://api.vk.com/method/" + method + arrayToUrlParameters(addElement(addElement(args, new String[]{"access_token", accessToken}), new String[]{"v", apiVersion}));
+    public static String getUrl(String method, String[][] args) {
+        return "https://api.vk.com/method/" + method + arrayToUrlParameters(args);
     }
 
     public String getLoginUrl() {
@@ -131,6 +135,14 @@ public class VKAPI implements Cloneable {
                 "&redirect_uri=" + redirectUri +
                 "&v=" + apiVersion +
                 "&response_type=" + ResponseType.token.name();
+    }
+
+    public static boolean isDebug() {
+        return debug;
+    }
+
+    public static void setDebug(boolean debug) {
+        VKAPI.debug = debug;
     }
 
     @SuppressWarnings({"CloneDoesntDeclareCloneNotSupportedException", "CloneDoesntCallSuperClone"})

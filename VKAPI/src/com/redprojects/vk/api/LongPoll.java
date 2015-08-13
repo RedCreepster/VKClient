@@ -37,16 +37,18 @@ public class LongPoll extends ArrayList<LongPoll.Response> implements Runnable {
             try {
                 String r = Utils.executeGet("https://" + server + "?act=a_check&key=" + key + "&ts=" + ts + "&wait=" + wait + "&mode=2");
                 JSONObject jsonResponse = new JSONObject(r);
-                ts = jsonResponse.getInt("ts");
-                JSONArray updates = jsonResponse.getJSONArray("updates");
-                if (jsonResponse.getJSONArray("updates").length() > 0)
-                    for (int i = 0; i < updates.length(); i++) {
-                        JSONArray items = updates.getJSONArray(i);
-                        int action = items.getInt(0);
-                        if (action == 4)
-                            for (Response response : this)
-                                response.message(items.getInt(1));
-                    }
+                if (jsonResponse.has("ts")) {
+                    ts = jsonResponse.getInt("ts");
+                    JSONArray updates = jsonResponse.getJSONArray("updates");
+                    if (jsonResponse.getJSONArray("updates").length() > 0)
+                        for (int i = 0; i < updates.length(); i++) {
+                            JSONArray items = updates.getJSONArray(i);
+                            int action = items.getInt(0);
+                            if (action == 4)
+                                for (Response response : this)
+                                    response.message(items.getInt(1));
+                        }
+                }
             } catch (IOException e) {
                 Log.console(this, "Ошибка подключения. Пробуем снова.");
             }

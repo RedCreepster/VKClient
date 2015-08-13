@@ -39,12 +39,12 @@ public class Player extends IAction {
     }
 
     class AIMP3 implements Control {
-        private final String PATH = ProgramArguments.getInstance().get("xbmcServer").getValue().toString();
+        private final String PATH = ProgramArguments.getInstance().get("aimpPath").getValue().toString();
         private File TEMP_FILE = new File("./tmp.m3u");
 
         @Override
         public void setPlaylist(JSONArray attachments) throws IOException {
-            String playlist = "";
+            String playlist = "#EXTM3U\n";
             for (int i = 0; i < attachments.length(); i++)
                 if (attachments.getJSONObject(i).getString("type").equals("audio")) {
                     JSONObject attachement = attachments.getJSONObject(i).getJSONObject("audio");
@@ -224,13 +224,13 @@ public class Player extends IAction {
             }
             if (ProgramArguments.getInstance().get("player").getValue().equals("XBMC"))
                 control = new XBMC();
-            else if (ProgramArguments.getInstance().get("player").getValue().equals("XBMC"))
+            else if (ProgramArguments.getInstance().get("player").getValue().equals("AIMP3"))
                 control = new AIMP3();
         }
     }
 
     @Override
-    public IAction parse() throws IOException {
+    public Player parse() throws IOException {
         allowed = allowedUsers.contains(String.valueOf(message.getInt("user_id")));
         if (!allowed)
             return this;
@@ -239,7 +239,13 @@ public class Player extends IAction {
         action = body.length == 2 ? body[1] : "";
 
         //noinspection IfCanBeSwitch
-        if (action.equals("play") || action.equals(">"))
+        if (action.toLowerCase().equals("youtube") || action.toLowerCase().equals("yt")) {
+            try {
+                sendResult("", new int[0], "Поддержка данной функции планируется в будущем.", 0, 0, 0, "", new int[0]);
+            } catch (VKAPIException e) {
+                e.printStackTrace();
+            }
+        } else if (action.equals("play") || action.equals(">"))
             control.play();
         else if (action.equals("pause") || action.equals("||"))
             control.pause();
@@ -273,7 +279,7 @@ public class Player extends IAction {
     }
 
     @Override
-    public IAction makeMessage() throws IOException {
+    public Player makeMessage() throws IOException {
         if (!allowed || done)
             return this;
         control.setPlaylist(attachments);
@@ -281,7 +287,7 @@ public class Player extends IAction {
     }
 
     @Override
-    public IAction sendMessage() throws VKAPIException {
+    public Player sendMessage() throws VKAPIException {
         if (!allowed) {
             sendResult("", new int[0], "Доступ запрешён.", 0, 0, 0, "", new int[0]);
             Log.console(this, "Пользователя " + message.getInt("user_id") + " нет в списке. Пропускаю.");

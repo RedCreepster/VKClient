@@ -60,9 +60,9 @@ public class Messenger implements LongPoll.Response {
                         }
                     }
             } catch (VKAPIException e) {
-                if (e instanceof GlobalException && (e.getCode() == 6 || e.getCode() == 9 || e.getCode() == 10)) {
+                if (e instanceof GlobalException && (e.getCode() == 6 || e.getCode() == 9 || e.getCode() == 10))
                     Log.console(this, e.getMessage() + "\nПропуск действия.");
-                } else
+                else
                     e.printStackTrace();
             }
         } catch (IOException e) {

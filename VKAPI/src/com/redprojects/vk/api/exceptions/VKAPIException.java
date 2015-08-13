@@ -52,6 +52,8 @@ public class VKAPIException extends Throwable {
         exceptions.put(302, new AudioException("302 Недопустимый размер файла."));
         //addAlbum
         exceptions.put(302, new AudioException("302 Создано максимальное количество альбомов."));
+        /*AccountException*/
+        exceptions.put(148, new AccountException("148 Нет доступа к меню пользователя."));
     }
 
     public VKAPIException(String message) {

@@ -2,6 +2,8 @@ package com.redprojects.vk.api.methods;
 
 import com.redprojects.vk.api.VKAPI;
 import com.redprojects.vk.api.exceptions.VKAPIException;
+import com.redprojects.vk.api.objects.Object;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 /**
@@ -9,14 +11,12 @@ import org.json.JSONObject;
  * Для вызова этих методов Ваше приложение должно иметь следующие права: audio.
  * Обратите внимание, что ссылки на аудиозаписи привязаны к ip адресу.
  */
-@SuppressWarnings("UnusedDeclaration")
 public class Audio extends Method {
 
     public Audio(VKAPI vkapi) {
         super(vkapi);
     }
 
-    @SuppressWarnings("UnusedDeclaration")
     public enum Filter {
         friends, groups, all
     }
@@ -26,25 +26,22 @@ public class Audio extends Method {
      *
      * @param owner_id  Идентификатор владельца аудиозаписей (пользователь или сообщество).
      *                  Обратите внимание, идентификатор сообщества в параметре owner_id необходимо указывать со знаком "-" — например, owner_id=-1 соответствует идентификатору сообщества ВКонтакте API (club1)<br />
-     *                  По умолчанию идентификатор текущего пользователя
      * @param album_id  Идентификатор альбома с аудиозаписями.
      * @param audio_ids Идентификаторы аудиозаписей, информацию о которых необходимо вернуть.
      *                  Список положительных чисел, разделенных запятыми
      * @param need_user 1 — возвращать информацию о пользователях, загрузивших аудиозапись.
      *                  Флаг, может принимать значения 1 или 0
-     * @param offset    Смещение, необходимое для выборки определенного количества аудиозаписей. По умолчанию — 0.
-     *                  Положительное число
+     * @param offset    Смещение, необходимое для выборки определенного количества аудиозаписей.
+     *                  Положительное число.
      * @param count     Количество аудиозаписей, информацию о которых необходимо вернуть. Максимальное значение — 6000.
-     *                  Положительное число
+     *                  Положительное число.
      *                  Обратите внимание, что даже с использованием параметра offset получить информацию об аудиозаписях, находящихся после первых 6 тысяч в списке пользователя или сообщества, невозможно.
      * @return После успешного выполнения возвращает список объектов audio.
-     * <p/>
      * Если был задан параметр need_user=1, дополнительно возвращается объект user, содержащий поля:<br />
      * id — идентификатор пользователя;<br />
      * photo — url фотографии профиля;<br />
      * name — имя и фамилия пользователя;<br />
      * name_gen — имя пользователя в родительном падеже.
-     * <p/>
      * <table>
      * <tr><td><span class="throwsLabel">Коды ошибок:</span></td></tr>
      * <tr>
@@ -53,7 +50,7 @@ public class Audio extends Method {
      * </tr>
      * </table>
      */
-    public JSONObject get(int owner_id, int album_id, int[] audio_ids, int need_user, int offset, int count) throws VKAPIException {
+    public com.redprojects.vk.api.objects.Audio[] get(int owner_id, int album_id, int[] audio_ids, int need_user, int offset, int count) throws VKAPIException {
         String methodName = Thread.currentThread().getStackTrace()[1].toString();
         methodName = methodName.substring(0, methodName.indexOf('('));
         methodName = methodName.substring(methodName.lastIndexOf('.') + 1);
@@ -62,35 +59,43 @@ public class Audio extends Method {
         for (int audio_id : audio_ids)
             bufAudio_ids += String.valueOf(audio_id) + ",";
 
-        return vkapi.getResponse(name + "." + methodName, new String[][]{
+        JSONArray items = vkapi.getResponse(name + "." + methodName, new String[][]{
                 {"owner_id", String.valueOf(owner_id)},
                 {"album_id", String.valueOf(album_id)},
                 {"audio_ids", bufAudio_ids},
                 {"need_user", String.valueOf(need_user)},
                 {"offset", String.valueOf(offset)},
                 {"count", String.valueOf(count)}
-        });
+        }).getJSONObject("response").getJSONArray("items");
+
+        com.redprojects.vk.api.objects.Audio[] audios = new com.redprojects.vk.api.objects.Audio[items.length()];
+        for (int i = 0; i < items.length(); i++)
+            audios[i] = (com.redprojects.vk.api.objects.Audio) Object.getObjectForMethod(this.getClass(), items.getJSONObject(i));
+        return audios;
     }
 
     /**
      * Возвращает информацию об аудиозаписях.
      *
      * @param audios Идентификаторы аудиозаписей, информацию о которых необходимо вернуть, в виде {owner_id}_{audio_id}.
-     *               ''''обязательный параметр''''
      * @return После успешного выполнения возвращает список объектов audio.
      */
-    public JSONObject getById(String[] audios) throws VKAPIException {
+    public com.redprojects.vk.api.objects.Audio getById(String[] audios) throws VKAPIException {
         String methodName = Thread.currentThread().getStackTrace()[1].toString();
         methodName = methodName.substring(0, methodName.indexOf('('));
         methodName = methodName.substring(methodName.lastIndexOf('.') + 1);
 
         String bufAudios = "";
-        for (String audio : audios) {
+        for (String audio : audios)
             bufAudios += String.valueOf(audio) + ",";
-        }
-        return vkapi.getResponse(name + "." + methodName, new String[][]{
+
+        return new com.redprojects.vk.api.objects.Audio(vkapi.getResponse(name + "." + methodName, new String[][]{
                 {"audios", bufAudios}
-        });
+        }).getJSONArray("response").getJSONObject(0));
+
+        /*return vkapi.getResponse(name + "." + methodName, new String[][]{
+                {"audios", bufAudios}
+        });*/
     }
 
     /**
@@ -98,18 +103,17 @@ public class Audio extends Method {
      *
      * @param lyrics_id Идентификатор текста аудиозаписи, информацию о котором необходимо вернуть.
      *                  Может быть получен с помощью методов audio.message, audio.getById или audio.search.
-     *                  ''''обязательный параметр''''
      * @return После успешного выполнения возвращает объект lyrics c полями lyrics_id — идентификатор текста и text — текст аудиозаписи..
      * В качестве переводов строк в тексте используется /n.
      */
-    public JSONObject getLyrics(int lyrics_id) throws VKAPIException {
+    public String getLyrics(int lyrics_id) throws VKAPIException {
         String methodName = Thread.currentThread().getStackTrace()[1].toString();
         methodName = methodName.substring(0, methodName.indexOf('('));
         methodName = methodName.substring(methodName.lastIndexOf('.') + 1);
 
         return vkapi.getResponse(name + "." + methodName, new String[][]{
                 {"lyrics_id", String.valueOf(lyrics_id)}
-        });
+        }).getJSONObject("response").getString("text");
     }
 
     /**
@@ -123,16 +127,16 @@ public class Audio extends Method {
      * @param performer_only Если этот параметр равен 1, поиск будет осуществляться только по названию исполнителя.
      *                       Флаг, может принимать значения 1 или 0
      * @param sort           Вид сортировки. 2 — по популярности, 1 — по длительности аудиозаписи, 0 — по дате добавления.
-     * @param search_own     1 – искать по аудиозаписям пользователя, 0 – не искать по аудиозаписям пользователя (по умолчанию).
+     * @param search_own     1 – искать по аудиозаписям пользователя, 0 – не искать по аудиозаписям пользователя
      *                       Флаг, может принимать значения 1 или 0
-     * @param offset         Смещение, необходимое для выборки определенного подмножетсва аудиозаписей. По умолчанию — 0.
-     *                       Положительное число
+     * @param offset         Смещение, необходимое для выборки определенного подмножетсва аудиозаписей.
+     *                       Положительное число.
      * @param count          Количество аудиозаписей, информацию о которых необходимо вернуть.
      *                       Обратите внимание — даже при использовании параметра offset для получения информации доступны только первые 1000 результатов.
-     *                       Положительное число, по умолчанию 30, максимальное значение 300
+     *                       Положительное число, максимальное значение 300.
      * @return После успешного выполнения возвращает список объектов audio.
      */
-    public JSONObject search(
+    public com.redprojects.vk.api.objects.Audio[] search(
             String q, int auto_complete, int lyrics, int performer_only,
             int sort, int search_own, int offset, int count
     ) throws VKAPIException {
@@ -140,7 +144,7 @@ public class Audio extends Method {
         methodName = methodName.substring(0, methodName.indexOf('('));
         methodName = methodName.substring(methodName.lastIndexOf('.') + 1);
 
-        return vkapi.getResponse(name + "." + methodName, new String[][]{
+        JSONArray items = vkapi.getResponse(name + "." + methodName, new String[][]{
                 {"q", q},
                 {"auto_complete", String.valueOf(auto_complete)},
                 {"lyrics", String.valueOf(lyrics)},
@@ -150,7 +154,12 @@ public class Audio extends Method {
                 {"search_own", String.valueOf(search_own)},
                 {"offset", String.valueOf(offset)},
                 {"count", String.valueOf(count)}
-        });
+        }).getJSONObject("response").getJSONArray("items");
+
+        com.redprojects.vk.api.objects.Audio[] audios = new com.redprojects.vk.api.objects.Audio[items.length()];
+        for (int i = 0; i < items.length(); i++)
+            audios[i] = (com.redprojects.vk.api.objects.Audio) Object.getObjectForMethod(this.getClass(), items.getJSONObject(i));
+        return audios;
     }
 
     /**
@@ -158,21 +167,19 @@ public class Audio extends Method {
      *
      * @return После успешного выполнения возвращает объект с единственным полем upload_url.
      */
-    public JSONObject getUploadServer() throws VKAPIException {
+    public String getUploadServer() throws VKAPIException {
         String methodName = Thread.currentThread().getStackTrace()[1].toString();
         methodName = methodName.substring(0, methodName.indexOf('('));
         methodName = methodName.substring(methodName.lastIndexOf('.') + 1);
 
-        return vkapi.getResponse(name + "." + methodName, new String[][]{{}});
+        return vkapi.getResponse(name + "." + methodName, new String[0][]).getJSONObject("response").getString("upload_url");
     }
 
     /**
      * Сохраняет аудиозаписи после успешной загрузки.
      *
      * @param server Параметр, возвращаемый в результате загрузки аудиофайла на сервер.
-     *               ''''обязательный параметр''''
      * @param audio  Параметр, возвращаемый в результате загрузки аудиофайла на сервер.
-     *               ''''обязательный параметр''''
      * @param hash   Параметр, возвращаемый в результате загрузки аудиофайла на сервер.
      * @param artist Автор композиции. По умолчанию берется из ID3 тегов.
      * @param title  Название композиции. По умолчанию берется из ID3 тегов.
@@ -219,9 +226,8 @@ public class Audio extends Method {
      * Копирует аудиозапись на страницу пользователя или группы.
      *
      * @param audio_id Идентификатор аудиозаписи.
-     *                 Положительное число, ''''обязательный параметр''''
+     *                 Положительное число.
      * @param owner_id Идентификатор владельца аудиозаписи (пользователь или сообщество).
-     *                 ''''обязательный параметр''''
      * @param group_id Идентификатор сообщества (если аудиозапись необходимо скопировать в список сообщества).
      * @return После успешного выполнения возвращает идентификатор созданной аудиозаписи (aid).
      */
@@ -241,9 +247,8 @@ public class Audio extends Method {
      * Удаляет аудиозапись со страницы пользователя или сообщества.
      *
      * @param audio_id Идентификатор аудиозаписи.
-     *                 Положительное число, ''''обязательный параметр''''
+     *                 Положительное число.
      * @param owner_id Идентификатор владельца аудиозаписи (пользователь или сообщество).
-     *                 ''''обязательный параметр''''
      * @return После успешного выполнения возвращает 1.
      */
     public JSONObject delete(int audio_id, int owner_id) throws VKAPIException {
@@ -264,19 +269,18 @@ public class Audio extends Method {
      *                  ID сообщества должен быть отрицательным.
      *                  owner_id=1 — пользователь;
      *                  owner_id=-1 — сообщество.
-     *                  ''''обязательный параметр''''
      * @param audio_id  Идентификатор аудиозаписи.
-     *                  Положительное число, ''''обязательный параметр''''
+     *                  Положительное число.
      * @param artist    Новое название исполнителя.
      * @param title     Новое название композиции.
      * @param text      Новый текст аудиозаписи.
      * @param genre_id  Идентификатор жанра из списка аудио жанров.
-     *                  Положительное число
-     * @param no_search 1 — аудиозапись не будет доступна в поиске. По умолчанию — 0.
+     *                  Положительное число.
+     * @param no_search 1 — аудиозапись не будет доступна в поиске.
      *                  Флаг, может принимать значения 1 или 0
      * @return После успешного выполнения возвращает id текста, введенного пользователем (lyrics_id), если текст не был введен, вернет 0.
      */
-    public JSONObject edit(int owner_id, int audio_id, String artist, String title, String text, int genre_id, int no_search) throws VKAPIException {
+    public JSONObject edit(int owner_id, int audio_id, String artist, String title, String text, int genre_id, boolean no_search) throws VKAPIException {
         String methodName = Thread.currentThread().getStackTrace()[1].toString();
         methodName = methodName.substring(0, methodName.indexOf('('));
         methodName = methodName.substring(methodName.lastIndexOf('.') + 1);
@@ -288,7 +292,7 @@ public class Audio extends Method {
                 {"title", title},
                 {"text", text},
                 {"genre_id", String.valueOf(genre_id)},
-                {"no_search", String.valueOf(no_search)}
+                {"no_search", no_search ? "1" : "0"}
         });
     }
 
@@ -296,9 +300,7 @@ public class Audio extends Method {
      * Изменяет порядок аудиозаписи, перенося ее между аудиозаписями, идентификаторы которых переданы параметрами after и before.
      *
      * @param audio_id Идентификатор аудиозаписи, которую нужно переместить.
-     *                 Положительное число, ''''обязательный параметр''''
-     * @param owner_id Идентификатор владельца аудиозаписи (пользователь или сообщество). По умолчанию — идентификатор текущего пользователя.
-     *                 По умолчанию идентификатор текущего пользователя
+     * @param owner_id Идентификатор владельца аудиозаписи (пользователь или сообщество).
      * @param before   Идентификатор аудиозаписи, перед которой нужно поместить композицию aid.
      * @param after    Идентификатор аудиозаписи, после которой нужно поместить композицию aid.
      * @return После успешного выполнения возвращает 1.
@@ -320,9 +322,8 @@ public class Audio extends Method {
      * Восстанавливает аудиозапись после удаления.
      *
      * @param audio_id Идентификатор аудиозаписи.
-     *                 Положительное число, ''''обязательный параметр''''
-     * @param owner_id Идентификатор владельца аудиозаписи (пользователь или сообщество). По умолчанию — идентификатор текущего пользователя.
-     *                 По умолчанию идентификатор текущего пользователя
+     *                 Положительное число.
+     * @param owner_id Идентификатор владельца аудиозаписи (пользователь или сообщество).
      * @return В случае успешного восстановления аудиозаписи возвращает структуру audio, которая имеет поля aid, owner_id, artist, title, url.
      * Если время хранения удаленной аудиозаписи истекло (обычно это 20 минут), сервер вернет ошибку 202 (Cache expired).
      */
@@ -341,11 +342,10 @@ public class Audio extends Method {
      * Возвращает список альбомов аудиозаписей пользователя или группы.
      *
      * @param owner_id Идентификатор пользователя или сообщества, у которого необходимо получить список альбомов с аудио.
-     *                 По умолчанию идентификатор текущего пользователя
      * @param offset   Смещение, необходимое для выборки определенного подмножества альбомов.
-     *                 Положительное число
+     *                 Положительное число.
      * @param count    Количество альбомов, которое необходимо вернуть.
-     *                 Положительное число, по умолчанию 50, максимальное значение 100
+     *                 Положительное число, максимальное значение 100
      * @return После успешного выполнения возвращает общее количество альбомов с аудиозаписями и массив объектов album, каждый из которых содержит следующие поля:<br />
      * id — идентификатор альбома;<br />
      * owner_id — идентификатор владельца альбома;<br />
@@ -367,9 +367,8 @@ public class Audio extends Method {
      * Создает пустой альбом аудиозаписей.
      *
      * @param group_id Идентификатор сообщества (если альбом нужно создать в сообществе).
-     *                 Положительное число
+     *                 Положительное число.
      * @param title    Название альбома.
-     *                 ''''обязательный параметр''''
      * @return После успешного выполнения возвращает идентификатор (album_id) созданного альбома.
      * <table>
      * <tr><td><span class="throwsLabel">Коды ошибок:</span></td></tr>
@@ -394,11 +393,10 @@ public class Audio extends Method {
      * Редактирует название альбома аудиозаписей.
      *
      * @param group_id Идентификатор сообщества, которому принадлежит альбом.
-     *                 Положительное число
+     *                 Положительное число.
      * @param album_id Идентификатор альбома.
-     *                 Положительное число, ''''обязательный параметр''''
+     *                 Положительное число.
      * @param title    Новое название для альбома.
-     *                 ''''обязательный параметр''''
      * @return После успешного выполнения возвращает 1.
      */
     public JSONObject editAlbum(int group_id, int album_id, String title) throws VKAPIException {
@@ -417,9 +415,9 @@ public class Audio extends Method {
      * Удаляет альбом аудиозаписей.
      *
      * @param group_id Идентификатор сообщества, которому принадлежит альбом.
-     *                 Положительное число
+     *                 Положительное число.
      * @param album_id Идентификатор альбома.
-     *                 Положительное число, ''''обязательный параметр''''
+     *                 Положительное число.
      * @return После успешного выполнения возвращает 1.
      */
     public JSONObject deleteAlbum(int group_id, int album_id) throws VKAPIException {
@@ -437,11 +435,11 @@ public class Audio extends Method {
      * Перемещает аудиозаписи в альбом.
      *
      * @param group_id  Идентификатор сообщества, в котором размещены аудиозаписи. Если параметр не указан, работа ведется с аудиозаписями текущего пользователя.
-     *                  Положительное число
+     *                  Положительное число.
      * @param album_id  Идентификатор альбома, в который нужно переместить аудиозаписи.
-     *                  Положительное число
+     *                  Положительное число.
      * @param audio_ids Идентификаторы аудиозаписей, которые требуется переместить.
-     *                  Список положительных чисел, разделенных запятыми, ''''обязательный параметр''''
+     *                  Список положительных чисел, разделенных запятыми.
      * @return После успешного выполнения возвращает 1.
      * Обратите внимание, в одном альбоме не может быть более 1000 аудиозаписей.
      */
@@ -465,8 +463,11 @@ public class Audio extends Method {
      * Транслирует аудиозапись в статус пользователю или сообществу.
      * Для вызова этого метода Ваше приложение должно иметь следующие права: status.
      *
-     * @param audio      Идентификатор аудиозаписи, которая будет отображаться в статусе, в формате owner_id_audio_id. Например, 1_190442705. Если параметр не указан, аудиостатус указанных сообществ и пользователя будет удален.
-     * @param target_ids Перечисленные через запятую идентификаторы сообществ и пользователя, которым будет транслироваться аудиозапись. Идентификаторы сообществ должны быть заданы в формате "-gid", где gid - идентификатор сообщества. Например, 1,-34384434. По умолчанию аудиозапись транслируется текущему пользователю.
+     * @param audio      Идентификатор аудиозаписи, которая будет отображаться в статусе, в формате owner_id_audio_id.
+     *                   Например, 1_190442705. Если параметр не указан, аудиостатус указанных сообществ и пользователя будет удален.
+     * @param target_ids Перечисленные через запятую идентификаторы сообществ и пользователя, которым будет транслироваться аудиозапись.
+     *                   Идентификаторы сообществ должны быть заданы в формате "-gid", где gid - идентификатор сообщества.
+     *                   Например, 1,-34384434. По умолчанию аудиозапись транслируется текущему пользователю.
      *                   Список чисел, разделенных запятыми, например "1,2,3", количество элементов должно составлять не более 20
      * @return В случае успешного выполнения возвращает массив идентификаторов сообществ и пользователя, которым был установлен или удален аудиостатус.
      */
@@ -489,7 +490,7 @@ public class Audio extends Method {
      * Возвращает список друзей и сообществ пользователя, которые транслируют музыку в статус.
      *
      * @param filter Определяет, какие типы объектов необходимо получить. Возможные значение содержатся в enum Filter.
-     * @param active 1 — будут возвращены только друзья и сообщества, которые транслируют музыку в данный момент. По умолчанию возвращаются все.
+     * @param active 1 — будут возвращены только друзья и сообщества, которые транслируют музыку в данный момент.
      *               Флаг, может принимать значения 1 или 0
      * @return После успешного выполнения возвращает список объектов друзей и сообществ с дополнительным полем status_audio — объект аудиозаписи, установленной в статус (если аудиозапись транслируется в текущей момент).
      */
@@ -509,13 +510,13 @@ public class Audio extends Method {
      *
      * @param target_audio Идентификатор аудиозаписи, на основе которой будет строиться список рекомендаций.
      *                     Используется вместо параметра uid. Идентификатор представляет из себя разделённые знаком подчеркивания id пользователя,которому принадлежит аудиозапись, и id самой аудиозаписи.
-     *                     Если аудиозапись принадлежит сообществу, то в качестве первого параметра используется -id сообщества.
-     * @param user_id      Идентификатор пользователя для получения списка рекомендаций на основе его набора аудиозаписей (по умолчанию — идентификатор текущего пользователя).
-     *                     Положительное число
+     *                     Если аудиозапись принадлежит сообществу, то в качестве первого параметра используется - id сообщества.
+     * @param user_id      Идентификатор пользователя для получения списка рекомендаций на основе его набора аудиозаписей
+     *                     Положительное число.
      * @param offset       Смещение относительно первой найденной аудиозаписи для выборки определенного подмножества.
-     *                     Положительное число
+     *                     Положительное число.
      * @param count        Количество возвращаемых аудиозаписей.
-     *                     Положительное число, максимальное значение 1000, по умолчанию 100
+     *                     Положительное число, максимальное значение 1000.
      * @param shuffle      1 — включен случайный порядок.
      *                     Флаг, может принимать значения 1 или 0
      * @return После успешного выполнения возвращает список объектов audio.
@@ -544,23 +545,23 @@ public class Audio extends Method {
     /**
      * Возвращает список аудиозаписей из раздела "Популярное".
      *
-     * @param only_eng 1 – возвращать только зарубежные аудиозаписи. 0 – возвращать все аудиозаписи. (по умолчанию)
+     * @param only_eng true – возвращать только зарубежные аудиозаписи. false – возвращать все аудиозаписи.
      *                 Флаг, может принимать значения 1 или 0
      * @param genre_id Идентификатор жанра из списка жанров.
-     *                 Положительное число
+     *                 Положительное число.
      * @param offset   Смещение, необходимое для выборки определенного подмножества аудиозаписей.
-     *                 Положительное число
+     *                 Положительное число.
      * @param count    Количество возвращаемых аудиозаписей.
-     *                 Положительное число, максимальное значение 1000, по умолчанию 100
+     *                 Положительное число, максимальное значение 1000.
      * @return После успешного выполнения возвращает список объектов audio.
      */
-    public JSONObject getPopular(int only_eng, int genre_id, int offset, int count) throws VKAPIException {
+    public JSONObject getPopular(boolean only_eng, int genre_id, int offset, int count) throws VKAPIException {
         String methodName = Thread.currentThread().getStackTrace()[1].toString();
         methodName = methodName.substring(0, methodName.indexOf('('));
         methodName = methodName.substring(methodName.lastIndexOf('.') + 1);
 
         return vkapi.getResponse(name + "." + methodName, new String[][]{
-                {"only_eng", String.valueOf(only_eng)},
+                {"only_eng", only_eng ? "1" : "0"},
                 {"genre_id", String.valueOf(genre_id)},
                 {"offset", String.valueOf(offset)},
                 {"count", String.valueOf(count)}
@@ -572,7 +573,6 @@ public class Audio extends Method {
      *
      * @param owner_id Идентификатор владельца аудиозаписей (пользователь или сообщество).
      *                 Обратите внимание, идентификатор сообщества в параметре owner_id необходимо указывать со знаком "-" — например, owner_id=-1 соответствует идентификатору сообщества ВКонтакте API (club1)
-     *                 ''''обязательный параметр''''
      * @return После успешного выполнения возвращает число, равное количеству аудиозаписей на странице пользователя или сообщества.
      */
     public JSONObject getCount(int owner_id) throws VKAPIException {
